@@ -1,8 +1,9 @@
 print("Bienvenido al organizador de eventos, a continuación se le presentarán las opciones disponibles")
 print("Opciones: ")
 print("1- Organizar un evento")
-print("2- Ver eventos pendientes")
+print("2- Ver eventos organizados")
 Contador=0
+Contador_de_eventos=0
 
 Unused_Resources={
     "Aulas":{
@@ -26,29 +27,13 @@ Unused_Resources={
     },
 }
 
-Used_resources={
-    "Organizador":[],
-    "Aulas":{
-        "Aula 1": {
-            "Horarios":[]
-        },
-        "Aula 5": {
-            "Horarios":[]
-        },
-        "Aula 6": {
-            "Horarios":[]
-        },
-    },
-    "Profesores":{
-        "Idania Urrutia":[],
-        "Alejandro Piad": [],
-        "Celia González": []
-    },
-}
+Used_resources=[]
 
 while Contador==0:
-    Contador==1
+    Contador=1
     Opcion_Elegida=int(input("Introduzca el número de la opción que desea: "))
+
+    #En el caso de que el usuario haya elegido organizar un evento
     if Opcion_Elegida==1:
         print("Aulas disponibles: " + str(Unused_Resources["Aulas"]))
         print("Rofesores disponibles: " + str(Unused_Resources["Profesores"]))
@@ -62,24 +47,39 @@ while Contador==0:
         Horario_Elegido=input("Introduzca la hora en la que desea realizar la conferencia teniendo en cuenta los horarios disponibles: ")
 
         #Aquí se va a chequear la disponibilidad de los recursos
-        if Horario_Elegido in Unused_Resources["Aulas"[Aula_Elegida["Horarios"]]] and Horario_Elegido in Unused_Resources["Profesores"[Profesor_Elegido]]:
+        if Horario_Elegido in Unused_Resources["Aulas"][Aula_Elegida]["Horarios"] and Horario_Elegido in Unused_Resources["Profesores"][Profesor_Elegido]:
 
             #En caso de que los recursos estén disponibles, se van a eliminar de los recursos disponibles y se van a añadir a los recursos en uso, pero como las aulas y los profesores se pueden utilizar varias veces a lo largo del día, solo se eliminarán los horarios
-            Used_resources["Organizador"].append(Nombre_Organizador)
-            Used_resources["Aulas"[Aula_Elegida["Horarios"]]].append(Horario_Elegido)
-            Used_resources["Profesores"[Profesor_Elegido]].append(Horario_Elegido)
-            Unused_Resources["Aulas"[Aula_Elegida["Horarios"]]].remove(Horario_Elegido)
-            Unused_Resources["Profesores"[Profesor_Elegido]].remove(Horario_Elegido)
+            Used_resources.append((Nombre_Organizador, Aula_Elegida, Profesor_Elegido, Horario_Elegido))
+            Unused_Resources["Aulas"][Aula_Elegida]["Horarios"].remove(Horario_Elegido)
+            Unused_Resources["Profesores"][Profesor_Elegido].remove(Horario_Elegido)
             print("Su evento ha sido añadido exitosamente")
 
             #Aquí se le va a dar al usuario la opción de elegir si desea volver a ejecutar el programa
             Repetir=input("Desea realizar otra operación?: ")
             if Repetir.lower()=="si" or Repetir.lower=="sí":
-                Contador==0
-            elif Repetir.lower=="no":
+                Contador=0
+            elif Repetir.lower()=="no":
                 print("Vale, gracias por utilizar mi programa")
-                Contador==1
             else:
                 print("No comprendo qué quiso decir con eso, pero vale, voy a asumir que no desea realizar más operaciones")
+
         else:
-            print("Usted ha intentado usar un recurso que no se encuentra disponible")   
+            print("Usted ha intentado usar un recurso que no se encuentra disponible")
+    #En el caso de que el usuario haya decidido ver la lista de eventos pendientes
+    elif Opcion_Elegida==2:
+        for Elemento in Used_resources:
+            print("Evento número: " + str(Contador_de_eventos+1) + ", organizador: " + Elemento[0] + ", Aula: " + Elemento[1], ", profesor: " + Elemento[2] + ", horario: " + Elemento[3])
+            Contador_de_eventos+=1
+
+        #Aquí se le va a dar al usuario la opción de elegir si desea volver a ejecutar el programa
+        Repetir=input("Desea realizar otra operación?: ")
+        if Repetir.lower()=="si" or Repetir.lower()=="sí":
+            Contador=0
+        elif Repetir.lower()=="no":
+            print("Vale, gracias por utilizar mi programa")
+        else:
+            print("No comprendo qué quiso decir con eso, pero vale, voy a asumir que no desea realizar más operaciones")
+    else:
+        print("Usted ha elegido una opción inválida, por favor vuelva a intentarlo")
+        Contador=0
