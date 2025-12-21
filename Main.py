@@ -35,16 +35,33 @@ while Contador==0:
 
     #En el caso de que el usuario haya elegido organizar un evento
     if Opcion_Elegida==1:
-        print("Aulas disponibles: " + str(Unused_Resources["Aulas"]))
-        print("Rofesores disponibles: " + str(Unused_Resources["Profesores"]))
+        #Imprimiendo una tabla con las aulas y sus características
+        print ("Aulas".ljust(10) + "Capacidad".ljust(13)+ "Horarios".ljust(0))
+        print ("-"*70)
+        for aula, datos in Unused_Resources["Aulas"].items():
+            horarios= ", ".join(datos["Horarios"])
+            fila=aula.ljust(13) +str(datos["Capacidad"]).ljust(10) + horarios
+            print(fila)
+
+        print("")
+        
+        #Imprimiendo una tabla con los profes y sus horarios
+        print ("Profesores".ljust(20) + "Horarios".ljust(0))
+        print ("-"*67)
+        for profe, horario in Unused_Resources["Profesores"].items():
+            horarios=", ".join(horario)
+            fila=profe.ljust(20) + horarios
+            print(fila)
         print("")
         print("A continuación se le va a pedir que introduzca las opciones deseadas, por favor, asegúrese de escribir teniendo en cuenta la disponbilidad de los recursos mostrados anteriormente, así como el formato en el que se encuentran escritos")
+        print("")
 
         #Aquí el usuario va a elegir qué elementos desea en su evento
         Nombre_Organizador=input("Introduzca su nombre y apellidos: ")
         Profesor_Elegido=input("Introduzca el nombre del profesor con el que desea organizar la conferencia teniendo en cuenta los que se encuentran disponibles: ")
         Aula_Elegida=input("Introduzca el aula en la que desea realizar la conferencia teniendo en cuenta las aulas disponibles: ")
         Horario_Elegido=input("Introduzca la hora en la que desea realizar la conferencia teniendo en cuenta los horarios disponibles: ")
+        print("")
 
         #Aquí se va a chequear la disponibilidad de los recursos
         if Horario_Elegido in Unused_Resources["Aulas"][Aula_Elegida]["Horarios"] and Horario_Elegido in Unused_Resources["Profesores"][Profesor_Elegido]:
