@@ -1,7 +1,7 @@
 import json
 
 Contador=0
-Contador_de_eventos=0
+IDs=0
 
 Unused_Resources={
     "Aulas":{
@@ -29,20 +29,18 @@ Used_resources=[]
 
 Control_de_Cuentas=[]
 
-#Me inventé un verificador de tipos STR, en caso de que el usuario escriba un valor que sea posible convertir a float, ese valor por supuesto quedaría descartado como un nombre y clasificado como False
-def Verificar_STR (Texto):
-    try: 
-        float(Texto)
-        return False
-    except ValueError:
-        return True
+#Me inventé un verificador de tipos
 
-def Verificar_INT (Texto):
-    try: 
-        int(Texto)<20
-        return True
+def verificar_tipo(texto):
+    try:
+        valor_int = int(texto)
+        return "int"
     except ValueError:
-        return False
+        try:
+            valor_float = float(texto)
+            return "float"
+        except ValueError:
+            return "str"
 
 def guardar_datos():
     try:
@@ -56,14 +54,19 @@ def guardar_datos():
         print("No fue posible guardar sus datos")
 
 def cargar_datos():
-    global Unused_Resources, Used_resources
+    global Unused_Resources, Used_resources,IDs
     try:
         with open("eventos_guardados.json", "r", encoding="utf-8") as archivo:
             datos=json.load(archivo)
             Unused_Resources=datos["Unused_Resources"]
             Used_resources=datos["Used_Resources"]
+            if Used_resources:
+                Last_Event=Used_resources[-1]
+                IDs=Last_Event[0]
+            else:
+                IDs=0
     except:
-        print("No se encontraron datos guardados, usando datos iniciales")
+        print("No se encontraron datos de recursos usados guardados, iniciando programa")
 
 def guardar_usuario():
     try:
@@ -79,7 +82,7 @@ def cargar_usuario():
             Usuarios=json.load(cuentas)
             Control_de_Cuentas=Usuarios
     except:
-        print("No se encontraron datos guardados, usando datos iniciales")
+        print("No se encontraron datos de usuario guardados, iniciando programa")
 #Aquí creé unas funciones que me permitan crear o sobrescribir un archivo .json, a partir de los diccionarios y listas ya creados y a partir de ese archivo reconstruir los diccionarios y listas
 
 while Contador==0:
@@ -123,7 +126,7 @@ while Contador==0:
                 print("")
 
                 #Aquí el usuario va a elegir qué elementos desea en su evento
-                if len(Nombre_Usuario)>=1 and Verificar_STR(Nombre_Usuario)==True:    
+                if len(Nombre_Usuario)>=1 and verificar_tipo(Nombre_Usuario)=="str":    
                     Profesor_Elegido=input("Introduzca el nombre del profesor con el que desea organizar la conferencia teniendo en cuenta los que se encuentran disponibles: ")
                     Aula_Elegida=input("Introduzca el aula en la que desea realizar la conferencia teniendo en cuenta las aulas disponibles: ")
                     Horario_Elegido=input("Introduzca la hora en la que desea realizar la conferencia teniendo en cuenta los horarios disponibles: ")
@@ -133,31 +136,56 @@ while Contador==0:
                     #Voy a hacer esta pequeña sección para que el usuario tenga mayor flexibilidad y pueda trabajar con algunos errores
                     if Profesor_Elegido.lower() in ["idania", "idania urrutia"]:
                         Profesor_Elegido="Idania Urrutia"
+                        PID="1"
                     elif Profesor_Elegido.lower() in ["alejandro", "piad", "alejandro piad"]:
                         Profesor_Elegido="Alejandro Piad"
+                        PID="2"
                     elif Profesor_Elegido.lower() in ["celia", "celia gonzalez", "celia gonzález"]:
                         Profesor_Elegido=("Celia González")
+                        PID="3"
                     #Ahora el usuario puede escribir el nombre del profesor de distintas maneras sin preocuparse por mayúsculas ni apellidos
 
                     if Aula_Elegida.lower() in ["1", "aula 1", "aula1"]:
                         Aula_Elegida="Aula 1"
+                        SID="1"
                     elif Aula_Elegida.lower() in ["5", "aula 5", "aula5"]:
                         Aula_Elegida="Aula 5"
+                        SID="2"
                     elif Aula_Elegida.lower() in ["6", "aula 6", "aula6"]:
                         Aula_Elegida="Aula 6"
+                        SID="3"
                     #Ahora el usuario puede escribir el aula en la que desea realizar la conferencia de manera más simplificada
+
+                    if Horario_Elegido == "09:15":
+                        TID="1"
+                    elif Horario_Elegido == "10:40":
+                        TID="2"
+                    elif Horario_Elegido == "12:05":
+                        TID="3"
+                    elif Horario_Elegido == "13:30":
+                        TID="4"
+                    elif Horario_Elegido == "14:55":
+                        TID="5"
+                    elif Horario_Elegido == "16:20":
+                        TID="6"
+                    elif Horario_Elegido == "17:45":
+                        TID="7"
+                    else:
+                        TID="0"
 
                     #Aquí se va a chequear la disponibilidad de los recursos
                     if Profesor_Elegido in Unused_Resources["Profesores"] and Aula_Elegida in Unused_Resources["Aulas"]:
                         if Horario_Elegido in Unused_Resources["Aulas"][Aula_Elegida]["Horarios"] and Horario_Elegido in Unused_Resources["Profesores"][Profesor_Elegido]:
-                            if Verificar_INT(Personas_Asignadas)==True:
-                                if int(Personas_Asignadas)<=Unused_Resources["Aulas"][Aula_Elegida]["Capacidad"]:
+                            if verificar_tipo(Personas_Asignadas)=="int":
+                                if int(Personas_Asignadas)<=Unused_Resources["Aulas"][Aula_Elegida]["Capacidad"] and int(Personas_Asignadas)>0:
 
                                     #En caso de que los recursos estén disponibles, se van a eliminar de los recursos disponibles y se van a añadir a los recursos en uso, pero como las aulas y los profesores se pueden utilizar varias veces a lo largo del día, solo se eliminarán los horarios
-                                    Used_resources.append((Nombre_Usuario, Aula_Elegida, Profesor_Elegido, Horario_Elegido, Personas_Asignadas))
+                                    IDs=int(SID+PID+TID)
+                                    Personas_Asignadas=int(Personas_Asignadas)
+                                    Used_resources.append((IDs, Nombre_Usuario, Aula_Elegida, Profesor_Elegido, Horario_Elegido, Personas_Asignadas))
                                     Unused_Resources["Aulas"][Aula_Elegida]["Horarios"].remove(Horario_Elegido)
                                     Unused_Resources["Profesores"][Profesor_Elegido].remove(Horario_Elegido)
-                                    print("Su evento ha sido añadido exitosamente")
+                                    print("Su evento ha sido añadido exitosamente, el ID de su evento es: " + str(IDs))
                                     guardar_datos()
 
                                     #Aquí se le va a dar al usuario la opción de elegir si desea volver a ejecutar el programa
@@ -166,13 +194,15 @@ while Contador==0:
                                         Contador=0
                                     elif Repetir.lower()=="no":
                                         print("Vale, gracias por utilizar mi programa")
+                                        Contador=1
                                     else:
                                         print("No comprendo qué quiso decir con eso, pero vale, voy a asumir que no desea realizar más operaciones")
+                                        Contador=1
 
                                 else:
                                     print("El aula que ha elegido no tiene capacidad para ese número de personas")
                             else:
-                                print("Solo puede ingresar valores enteros para la capacidad")
+                                print("Solo puede ingresar valores enteros positivos para la capacidad")
                         else:
                             print("Usted ha intentado usar un recurso que no se encuentra disponible en el horario indicado")
                     else:
@@ -185,8 +215,7 @@ while Contador==0:
             elif Opcion_Elegida=="2":
                 if len(Used_resources) != 0:
                     for Elemento in Used_resources:
-                        print("Evento número " + str(Contador_de_eventos+1) + ", organizador: " + Elemento[0] + ", local: " + Elemento[1], ", profesor: " + Elemento[2] + ", horario: " + Elemento[3] + ", capacidad reservada: " + Elemento[4])
-                        Contador_de_eventos+=1
+                        print("ID de evento: " + str(Elemento[0]) + ", organizador: " + Elemento[1] + ", local: " + Elemento[2], ", profesor: " + Elemento[3] + ", horario: " + Elemento[4] + ", capacidad reservada: " + str(Elemento[5]))
                 else:
                     print("No se ha registrado ningún evento")
 
@@ -203,43 +232,36 @@ while Contador==0:
                     Contador=1
             
             elif Opcion_Elegida=="3":
-                Aula_Elegida=input("Escriba el aula en la que organizó la conferencia que desea organizar: ")
-                Horario_Elegido=input("Escriba la hora a la que organizó la conferencia: ")
-                Profesor_Elegido=input("Introduzca el nombre del profesor con el que organizó la conferencia: ")
-                Personas_Asignadas=input("Introduzca el número de personas que iban a asistir a su evento: ")
-
-                if Aula_Elegida.lower() in ["1", "aula 1", "aula1"]:
-                    Aula_Elegida="Aula 1"
-                elif Aula_Elegida.lower() in ["5", "aula 5", "aula5"]:
-                    Aula_Elegida="Aula 5"
-                elif Aula_Elegida.lower() in ["6", "aula 6", "aula6"]:
-                    Aula_Elegida="Aula 6"
-
-                if Profesor_Elegido.lower() in ["idania", "idania urrutia"]:
-                    Profesor_Elegido="Idania Urrutia"
-                elif Profesor_Elegido.lower() in ["alejandro", "piad", "alejandro piad"]:
-                    Profesor_Elegido="Alejandro Piad"
-                elif Profesor_Elegido.lower() in ["celia", "celia gonzalez", "celia gonzález"]:
-                    Profesor_Elegido=("Celia González")
-                if (Nombre_Usuario, Aula_Elegida, Profesor_Elegido, Horario_Elegido, Horario_Elegido) in Used_resources:
-                    Unused_Resources["Aulas"][Aula_Elegida]["Horarios"].append(Horario_Elegido)
-                    Unused_Resources["Profesores"][Profesor_Elegido].append(Horario_Elegido)
-                    Used_resources.remove((Nombre_Usuario, Aula_Elegida, Profesor_Elegido, Horario_Elegido, Horario_Elegido))
-                    print("Su evento ha sido eliminado exitosamente")
-                    guardar_datos()
-
+                found=False
+                ID_Elegido=input("Introduzca el ID del evento que desea eliminar: ")
+                if verificar_tipo(ID_Elegido)=="int":
+                    ID_Elegido=int(ID_Elegido)
+                    for Elemento in Used_resources:    
+                        if ID_Elegido==Elemento[0] and Nombre_Usuario==Elemento[1]:
+                            if Elemento[4] not in Unused_Resources["Aulas"][Elemento[2]]["Horarios"]:
+                                Unused_Resources["Aulas"][Elemento[2]]["Horarios"].append(Elemento[4])
+                            if Elemento[4] not in Unused_Resources["Profesores"][Elemento[3]]:
+                                Unused_Resources["Profesores"][Elemento[3]].append(Elemento[4])
+                            Used_resources.remove((Elemento))
+                            print("Su evento ha sido eliminado exitosamente")
+                            guardar_datos()
+                            found=True
+                            break
+                    if not found:
+                        print("No existe ningún evento creado por usted con ese ID")
                     #Aquí se le va a dar al usuario la opción de elegir si desea volver a ejecutar el programa
                     Repetir=input("Desea realizar otra operación?: ")
                     if Repetir.lower() in ["sí", "si"]:
                         Contador=0
                     elif Repetir.lower()=="no":
                         print("Vale, gracias por utilizar mi programa")
+                        Contador=1
                     else:
                         print("No comprendo qué quiso decir con eso, pero vale, voy a asumir que no desea realizar más operaciones")
+                        Contador=1
                 else:
-                    print("No existe ningún evento creado por usted con las características introducidas")
+                    print("Usted ha introducido un ID inválido")
                     Contador=0
-
             else:
                 print("Usted ha elegido una opción inválida, por favor vuelva a intentarlo")
                 Contador=0
@@ -250,8 +272,8 @@ while Contador==0:
         if Desea_Crear.lower() in ["yes", "y", "si", "sí", "s"]:
             Nombre_Usuario=input("Introduzca su nombre de usuario: ")
             Contraseña=input("Introduzca la contraseña (Debe tener cuatro o más caracteres): ")
-            if len(Nombre_Usuario)>=1 and Verificar_STR(Nombre_Usuario)==True and len(Contraseña)>=4:
-                Control_de_Cuentas.append((Nombre_Usuario, Contraseña))
+            if len(Nombre_Usuario)>=1 and verificar_tipo(Nombre_Usuario)=="str" and len(Contraseña)>=4 and [Nombre_Usuario, Contraseña] not in Control_de_Cuentas:
+                Control_de_Cuentas.append([Nombre_Usuario, Contraseña])
                 print("Su cuenta ha sido registrada con éxito")
                 Contador=0
                 guardar_usuario()
@@ -260,10 +282,10 @@ while Contador==0:
                 Contador=0
         elif Desea_Crear.lower() in ["no", "n"]:
             print("Vale, como desee")
-            contador=1
+            Contador=1
         else:
             print("Supondré que no lo desea")
-            contador=1
+            Contador=1
     else:
         print("Usted ha dado una respuesta inválida")
         Contador=0
