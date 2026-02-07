@@ -13,7 +13,7 @@ Unused_Resources={
              "Capacidad":40,
              "Horarios": ["09:15", "10:40", "12:05", "13:30", "14:55", "16:20", "17:45"]
         },
-        "Aula 6":{
+        "Laboratorio":{
              "Capacidad":45,
              "Horarios": ["09:15", "10:40", "12:05", "13:30", "14:55", "16:20", "17:45"]
         },
@@ -23,6 +23,11 @@ Unused_Resources={
         "Alejandro Piad":["09:15", "10:40", "12:05", "13:30", "14:55", "16:20", "17:45"],
         "Celia González": ["09:15", "10:40", "12:05", "13:30", "14:55", "16:20", "17:45"]
     },
+    "Materiales":{
+        "Proyector": {
+            "Cantidad": 2
+        }
+    }
 }
 
 Used_resources=[]
@@ -90,11 +95,13 @@ while Contador==0:
     cargar_usuario()
     print("")
     Contador=1
-    Bienvenida_Cuenta=input("Sea bienvenido al organizador de eventos, tiene usted ya una cuenta creada?: ")
+    Bienvenida_Cuenta=input("Sea bienvenido al organizador de eventos. Este programa fue creado para que los líderes de grupo pudiese organizar consultas con sus profesores, por lo tanto, aquí podrá elegir un horario, local y profesor para realizar su consulta. Tiene usted ya una cuenta creada?: ")
     if Bienvenida_Cuenta.lower() in ["si", "sí", "s", "yes", "y"]:
         Nombre_Usuario=input("Por favor, introduzca su nombre de usuario: ")
         Contraseña=input("Por favor, introduzca su contraseña: ")
         if [Nombre_Usuario, Contraseña] in Control_de_Cuentas:
+            print("")
+            print("")
             print("Bienvenido al organizador de eventos, " + Nombre_Usuario + " a continuación se le presentarán las opciones disponibles")
             print("Opciones: ")
             print("1- Organizar un evento")
@@ -131,6 +138,7 @@ while Contador==0:
                     Aula_Elegida=input("Introduzca el aula en la que desea realizar la conferencia teniendo en cuenta las aulas disponibles: ")
                     Horario_Elegido=input("Introduzca la hora en la que desea realizar la conferencia teniendo en cuenta los horarios disponibles: ")
                     Personas_Asignadas=input("Introduzca el número de personas que van a asistir a su evento: ")
+                    Material_Elegido=input("Desea utilizar un proyector? (si/no): ")
                     print("")
 
                     #Voy a hacer esta pequeña sección para que el usuario tenga mayor flexibilidad y pueda trabajar con algunos errores
@@ -151,8 +159,8 @@ while Contador==0:
                     elif Aula_Elegida.lower() in ["5", "aula 5", "aula5"]:
                         Aula_Elegida="Aula 5"
                         SID="2"
-                    elif Aula_Elegida.lower() in ["6", "aula 6", "aula6"]:
-                        Aula_Elegida="Aula 6"
+                    elif Aula_Elegida.lower() in ["laboratorio", "lab"]:
+                        Aula_Elegida="Laboratorio"
                         SID="3"
                     #Ahora el usuario puede escribir el aula en la que desea realizar la conferencia de manera más simplificada
 
@@ -174,39 +182,55 @@ while Contador==0:
                         TID="0"
 
                     #Aquí se va a chequear la disponibilidad de los recursos
-                    if Profesor_Elegido in Unused_Resources["Profesores"] and Aula_Elegida in Unused_Resources["Aulas"]:
-                        if Horario_Elegido in Unused_Resources["Aulas"][Aula_Elegida]["Horarios"] and Horario_Elegido in Unused_Resources["Profesores"][Profesor_Elegido]:
-                            if verificar_tipo(Personas_Asignadas)=="int":
-                                if int(Personas_Asignadas)<=Unused_Resources["Aulas"][Aula_Elegida]["Capacidad"] and int(Personas_Asignadas)>0:
-
-                                    #En caso de que los recursos estén disponibles, se van a eliminar de los recursos disponibles y se van a añadir a los recursos en uso, pero como las aulas y los profesores se pueden utilizar varias veces a lo largo del día, solo se eliminarán los horarios
-                                    IDs=int(SID+PID+TID)
-                                    Personas_Asignadas=int(Personas_Asignadas)
-                                    Used_resources.append((IDs, Nombre_Usuario, Aula_Elegida, Profesor_Elegido, Horario_Elegido, Personas_Asignadas))
-                                    Unused_Resources["Aulas"][Aula_Elegida]["Horarios"].remove(Horario_Elegido)
-                                    Unused_Resources["Profesores"][Profesor_Elegido].remove(Horario_Elegido)
-                                    print("Su evento ha sido añadido exitosamente, el ID de su evento es: " + str(IDs))
-                                    guardar_datos()
-
-                                    #Aquí se le va a dar al usuario la opción de elegir si desea volver a ejecutar el programa
-                                    Repetir=input("Desea realizar otra operación?: ")
-                                    if Repetir.lower() in ["sí", "si"]:
-                                        Contador=0
-                                    elif Repetir.lower()=="no":
-                                        print("Vale, gracias por utilizar mi programa")
-                                        Contador=1
-                                    else:
-                                        print("No comprendo qué quiso decir con eso, pero vale, voy a asumir que no desea realizar más operaciones")
-                                        Contador=1
-
-                                else:
-                                    print("El aula que ha elegido no tiene capacidad para ese número de personas")
-                            else:
-                                print("Solo puede ingresar valores enteros positivos para la capacidad")
-                        else:
-                            print("Usted ha intentado usar un recurso que no se encuentra disponible en el horario indicado")
+                    if not Profesor_Elegido=="Alejandro Piad" and Aula_Elegida=="Laboratorio":
+                        print("Solo Alejandro Piad puede dar clases en el laboratorio")
+                        Contador=0
                     else:
-                        print("Error, ha cometido un error al escribir el aula o profesor")
+                        if Profesor_Elegido in Unused_Resources["Profesores"] and Aula_Elegida in Unused_Resources["Aulas"]:
+                            if Horario_Elegido in Unused_Resources["Aulas"][Aula_Elegida]["Horarios"] and Horario_Elegido in Unused_Resources["Profesores"][Profesor_Elegido]:
+                                if verificar_tipo(Personas_Asignadas)=="int":
+                                    if int(Personas_Asignadas)<=Unused_Resources["Aulas"][Aula_Elegida]["Capacidad"] and int(Personas_Asignadas)>0:
+
+                                        #En caso de que los recursos estén disponibles, se van a eliminar de los recursos disponibles y se van a añadir a los recursos en uso, pero como las aulas y los profesores se pueden utilizar varias veces a lo largo del día, solo se eliminarán los horarios
+                                        IDs=int(SID+PID+TID)
+                                        Personas_Asignadas=int(Personas_Asignadas)
+                                        evento=(IDs,Nombre_Usuario,Aula_Elegida,Profesor_Elegido,Horario_Elegido,Personas_Asignadas)
+                                        if Material_Elegido.lower() in ["sí", "si"]:
+                                            if Unused_Resources["Materiales"]["Proyector"]["Cantidad"]>0:
+                                                Unused_Resources["Materiales"]["Proyector"]["Cantidad"]-=1
+                                                evento=evento+("Proyector",)
+                                                print("Se ha asignado un proyector")
+                                            else:
+                                                print("No quedan proyectores disponibles")
+                                        elif Material_Elegido.lower=="no":
+                                            print("No se le ha asignado un proyector")
+                                        else:
+                                            print("No ha sido posible interpretar lo que ha escrito, pero se asumirá que no desea el proyector")
+                                        Used_resources.append(evento)
+                                        Unused_Resources["Aulas"][Aula_Elegida]["Horarios"].remove(Horario_Elegido)
+                                        Unused_Resources["Profesores"][Profesor_Elegido].remove(Horario_Elegido)
+                                        print("Su evento ha sido añadido exitosamente, el ID de su evento es: " + str(IDs))
+                                        guardar_datos()
+
+                                        #Aquí se le va a dar al usuario la opción de elegir si desea volver a ejecutar el programa
+                                        Repetir=input("Desea realizar otra operación?: ")
+                                        if Repetir.lower() in ["sí", "si"]:
+                                            Contador=0
+                                        elif Repetir.lower()=="no":
+                                            print("Vale, gracias por utilizar mi programa")
+                                            Contador=1
+                                        else:
+                                            print("No comprendo qué quiso decir con eso, pero vale, voy a asumir que no desea realizar más operaciones")
+                                            Contador=1
+
+                                    else:
+                                        print("El aula que ha elegido no tiene capacidad para ese número de personas")
+                                else:
+                                    print("Solo puede ingresar valores enteros positivos para la capacidad")
+                            else:
+                                print("Usted ha intentado usar un recurso que no se encuentra disponible en el horario indicado")
+                        else:
+                            print("Error, ha cometido un error al escribir el aula o profesor")
                 else:
                     print("Solamente se admiten valores alfabéticos")
                 Contador=0
@@ -215,7 +239,7 @@ while Contador==0:
             elif Opcion_Elegida=="2":
                 if len(Used_resources) != 0:
                     for Elemento in Used_resources:
-                        print("ID de evento: " + str(Elemento[0]) + ", organizador: " + Elemento[1] + ", local: " + Elemento[2], ", profesor: " + Elemento[3] + ", horario: " + Elemento[4] + ", capacidad reservada: " + str(Elemento[5]))
+                        print("ID de evento: " + str(Elemento[0]) + ", organizador: " + Elemento[1] + ", local: " + Elemento[2], ", profesor: " + Elemento[3] + ", horario: " + Elemento[4] + ", capacidad reservada: " + str(Elemento[5]) + ", material: " + Elemento[6] if len(Elemento)>6 else "Ninguno")
                 else:
                     print("No se ha registrado ningún evento")
 
@@ -231,6 +255,7 @@ while Contador==0:
                     print("No comprendo qué quiso decir con eso, pero vale, voy a asumir que no desea realizar más operaciones")
                     Contador=1
             
+            #El usuario va a escribir el ID de su evento y e caso de que este evento esté registrado bajo el nombre del usuario va a poder hacerlo
             elif Opcion_Elegida=="3":
                 found=False
                 ID_Elegido=input("Introduzca el ID del evento que desea eliminar: ")
@@ -242,6 +267,8 @@ while Contador==0:
                                 Unused_Resources["Aulas"][Elemento[2]]["Horarios"].append(Elemento[4])
                             if Elemento[4] not in Unused_Resources["Profesores"][Elemento[3]]:
                                 Unused_Resources["Profesores"][Elemento[3]].append(Elemento[4])
+                            if len(Elemento)>6 and Elemento[6]=="Proyector":
+                                Unused_Resources["Materiales"]["Proyector"]["Cantidad"]+=1
                             Used_resources.remove((Elemento))
                             print("Su evento ha sido eliminado exitosamente")
                             guardar_datos()
@@ -249,6 +276,7 @@ while Contador==0:
                             break
                     if not found:
                         print("No existe ningún evento creado por usted con ese ID")
+
                     #Aquí se le va a dar al usuario la opción de elegir si desea volver a ejecutar el programa
                     Repetir=input("Desea realizar otra operación?: ")
                     if Repetir.lower() in ["sí", "si"]:
@@ -259,6 +287,7 @@ while Contador==0:
                     else:
                         print("No comprendo qué quiso decir con eso, pero vale, voy a asumir que no desea realizar más operaciones")
                         Contador=1
+                        
                 else:
                     print("Usted ha introducido un ID inválido")
                     Contador=0
@@ -272,11 +301,22 @@ while Contador==0:
         if Desea_Crear.lower() in ["yes", "y", "si", "sí", "s"]:
             Nombre_Usuario=input("Introduzca su nombre de usuario: ")
             Contraseña=input("Introduzca la contraseña (Debe tener cuatro o más caracteres): ")
-            if len(Nombre_Usuario)>=1 and verificar_tipo(Nombre_Usuario)=="str" and len(Contraseña)>=4 and [Nombre_Usuario, Contraseña] not in Control_de_Cuentas:
-                Control_de_Cuentas.append([Nombre_Usuario, Contraseña])
-                print("Su cuenta ha sido registrada con éxito")
-                Contador=0
-                guardar_usuario()
+            if len(Nombre_Usuario)>=1 and verificar_tipo(Nombre_Usuario)=="str" and len(Contraseña)>=4:
+                Cuenta_Existente=False
+                if len(Control_de_Cuentas)>=1:
+                    for Elemento in Control_de_Cuentas:
+                        if Nombre_Usuario in Elemento:
+                            print("Ese nombre de usuario  ya está en uso")
+                            Cuenta_Existente=True
+                            Contador=0
+                            break
+                        elif Nombre_Usuario not in Elemento:
+                            Cuenta_Existente=False
+                if Cuenta_Existente==False:
+                    Control_de_Cuentas.append([Nombre_Usuario, Contraseña])
+                    guardar_usuario()
+                    print("Su cuenta ha sido registrada con éxito")
+                    Contador=0
             else:
                 print("Lo sentimos, los datos introducidos son inválidos")
                 Contador=0
