@@ -7,11 +7,11 @@ El proyecto empezó porque los estudiantes de la Facultad de Matemática y Compu
 
 Durante la implementación se presentaron varios retos técnicos:
 
-1- Gestión de horarios con datetime: Inicialmente se trabajó con intervalos preestablecidos para evitar colisiones y posteriormente fueron implementadas funciones como crear_intervalo e intervalos_solapan para validar horarios y prevenir solapamientos.
-2- Persistencia de datos: Se resolvió mediante el almacenamiento en archivos JSON, para lo cual se diseñaron funciones guardar_datos y cargar_datos que lograron convertir objetos datetime a formato ISO y los reconstruyen al cargar. Además ambas funciones permitieron que fuese posible almacenar y cargar información previamente guardada mediante el uso de un archivo de formato .json
-3- Sistema de usuarios y contraseñas: Se añadió un mecanismo de registro y login para evitar que un usuario cancele eventos ajenos y para garantizar su persistencia se implementó almacenamiento en Usuarios.json.
-4-Identificación de eventos: Se creó un sistema de IDs únicos para facilitar la cancelación y gestión de eventos.
-5-Restricciones adicionales: Solo el profesor Alejandro Piad puede impartir clases en el laboratorio.Adem.as, se añadió la opción de utilizar proyectores, con un máximo de uno por clase y una cantidad limitada en inventario.
+- Gestión de horarios con datetime: Inicialmente se trabajó con intervalos preestablecidos para evitar colisiones y posteriormente fueron implementadas funciones como crear_intervalo e intervalos_solapan para validar horarios y prevenir solapamientos.
+- Persistencia de datos: Se resolvió mediante el almacenamiento en archivos JSON, para lo cual se diseñaron funciones guardar_datos y cargar_datos que lograron convertir objetos datetime a formato ISO y los reconstruyen al cargar. Además ambas funciones permitieron que fuese posible almacenar y cargar información previamente guardada mediante el uso de un archivo de formato .json
+- Sistema de usuarios y contraseñas: Se añadió un mecanismo de registro y login para evitar que un usuario cancele eventos ajenos y para garantizar su persistencia se implementó almacenamiento en Usuarios.json.
+- Identificación de eventos: Se creó un sistema de IDs únicos para facilitar la cancelación y gestión de eventos.
+- Restricciones adicionales: Solo el profesor Alejandro Piad puede impartir clases en el laboratorio.Adem.as, se añadió la opción de utilizar proyectores, con un máximo de uno por clase y una cantidad limitada en inventario.
 
 
  Funcionalidades principales:
